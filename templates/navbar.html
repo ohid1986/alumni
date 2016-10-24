@@ -1,0 +1,165 @@
+{% load staticfiles %}
+{% load nav %}
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" >
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'member:home' %}"><img src="{% static 'site/images/index.png' %}" class="img-responsive"  alt="logo"></a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="{% active_page request 'home' %}">
+                        <a href="{% url 'member:home' %}">
+                        <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home<span class="sr-only">(current)</span></a>
+                    </li>
+
+                    {% url 'member:person-list' as url_person %}
+                    {% url 'member:execomember-list' as url_exemember %}
+                    {% url 'member:lifemember-list' as url_lifemember %}
+                    {% url 'member:cons-list' as url_cons %}
+                    <li class="dropdown {% if request.path == url_person or request.path == url_exemember or request.path == url_lifemember or request.path == url_cons  %}active{% endif %}">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Alumni
+                            <span class="caret"></span>
+                        </a>
+
+
+                      <ul class="dropdown-menu">
+                          <li >
+                                <a href="{{url_person}}">
+                                    <span class="" aria-hidden="true"></span>Member</a></li>
+
+                         <li class="">
+                                <a href="{{url_exemember}}">
+                                    <span class="" aria-hidden="true"></span>Execuitve Member</a></li>
+                          <li><a href={{url_lifemember}}>
+                              <span class="" aria-hidden="true"></span>Life Member</a></li>
+
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{{url_cons}}">
+                            <span class="" aria-hidden="true"></span>Alumnai Constitution link</a></li>
+
+                      </ul>
+                    </li>
+
+
+                    <li {% if 'blog' in request.path %} class="active" {% endif %}>
+                        <a href="{% url 'blog_post_list' %}">
+                          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></i>News</a></li>
+
+                    <li {% if 'about' in request.path %} class="active" {% endif %}>
+                        <a href="{% url 'about_site' %}">
+                            <span class="" aria-hidden="true"></span> About
+                        </a>
+                    </li>
+
+                    <li class="{% active_page request 'contact'  %}">
+                        <a href="{% url 'contact' %}">
+                            <i class="fa fa-envelope" aria-hidden="true"></i> Contact
+                        </a>
+                    </li>
+                  </ul>
+
+
+
+          <ul class="nav navbar-nav navbar-right">
+
+
+              {% url 'member:event-list' as url_event %}
+              {% url 'member:gallery-list' as url_gallery %}
+              {% url 'member:member_tag_list' as url_tag %}
+              {% url 'member:event-gallery' as url_event_gallery %}
+              <li class="dropdown {% if request.path == url_event or request.path == url_gallery or request.path == url_tag or request.path == url_event_gallery %}active{% endif %}">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>Gallery
+                            <span class="caret"></span>
+                        </a>
+
+
+                      <ul class="dropdown-menu">
+                          <li class="">
+                                <a href="{{url_event}}">
+                                    <span class="" aria-hidden="true"></span>&nbsp;Event List</a></li>
+
+                         <li class="">
+                                <a href="{{url_gallery}}">
+                                    <span class="" aria-hidden="true"></span>&nbsp;Gallery List</a></li>
+                          <li class="">
+                                <a href="{{url_tag}}">
+                                    <span class="" aria-hidden="true"></span>&nbsp;Tag List</a></li>
+
+
+
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{{url_event_gallery}}">
+                            <span class="" aria-hidden="true"></span>&nbsp;Photo Gallery link</a></li>
+
+                      </ul>
+                    </li>
+
+
+
+              {% if request.user.is_authenticated %}
+              <li class="{% active_page request 'profile' %}">
+                  <a href="{% url 'dj-auth:profile' %}">
+                View Profile</a></li>
+
+                <li class="{% active_page request 'logout' %}">
+                    <a href="{% url 'dj-auth:logout' %}"><span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp;Logout</a></li>
+                {% else %}
+                <li class="{% active_page request 'create' %}">
+                    <a href="{% url 'dj-auth:create' %}">
+                Register</a></li>
+
+                <li class="{% active_page request 'login' %}" >
+                    <a href="{% url 'dj-auth:login' %}"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Log-in</a></li>
+                {% endif %}
+
+
+
+
+            </ul>
+
+
+            </div><!-- /.navbar-collapse -->
+
+          <!-- /.container-fluid -->
+            </div>
+        </nav>
+
+    <header id="header">
+    <div class="top-bar">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-md-8 pull-left">
+                    <div class="banner">
+
+
+                        <h4>Dhaka University Applied Chemistry and Chemical Engineering<br> Alumni Association</h4>
+                        </div>
+                </div>
+                 <div class="col-sm-4 col-md-4">
+                <div class="search">
+                    <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'member:search' %}">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search members" name="q" value="">
+                </div>
+                <button type="submit" class="btn btn-default">Search</button>
+            </form>
+                </div>
+                     </div>
+
+            </div>
+        </div><!--/.container-->
+    </div><!--/.top-bar-->
+
+</header>
+
+
+

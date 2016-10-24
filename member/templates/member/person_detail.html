@@ -1,0 +1,194 @@
+{% extends parent_template|default:"member/base_member.html" %}
+
+{% block page_header %}
+<div role="navigation" aria-label="breadcrumbs navigation">
+    <ol class="breadcrumb">
+      <li><a href="{% url 'member:person-list' %}">Member</a></li>
+      <li class="active">{{ object.name }}</li>
+    </ol>
+
+     {% if perms.member.change_person or perms.member.delete_person %}
+         <div class="row">
+            <div class="col-sm-3 col-sm-offset-1">
+                  {% if perms.member.change_person %}
+
+                      <a
+                          href="{{ object.get_update_url }}">
+                          <button type="submit" class="btn btn-primary btn-md">
+                        <span class="glyphicon glyphicon-pencil">Edit</span>
+                    </button></a>
+                  {% endif %}
+            </div>
+                <div class="col-sm-7 col-offset-sm-4">
+                  {% if perms.member.delete_person %}
+
+                      <a
+                          href="{{ object.get_delete_url }}">
+                         <button type="submit" class="btn btn-primary btn-md">
+                        <span class="glyphicon glyphicon-trash">Delete</span>
+                    </button></a>
+                  {% endif %}
+
+             </div>
+    </div>
+    {% endif %}
+</div>
+
+
+{% endblock page_header %}
+
+{% block body %}
+
+<div class="container">
+
+
+    <div class="row">
+        <!-- Left Album Info -->
+        <div class="col-sm-9">
+            <div class="member-detail">
+           <h4><strong>Member Information</strong></h4>
+
+                <p>Name: <strong>{{object.name}}</strong></p>
+                 <p>Name in Bangla:<strong>{{object.name_in_bangla}}</strong> </p>
+              <p>Nick Name:<strong>{{object.nick_name}}</strong> </p>
+              <p>Date of Birth: <strong>{{object.birth_date}}</strong></p>
+              <p>Present Address: <strong>{{object.present_address}}</strong></p>
+              <p>Permanent Address: <strong>{{object.permanent_address}}</strong></p>
+              <p>Blood Group: <strong>{{object.blood_group}}</strong></p>
+              <p>Email: <strong>{{object.user}}</strong></p>
+              <p>Land Telephone: <strong>{{object.tele_land}}</strong></p>
+                 <p>Cell Phone: <strong>{{object.tele_cell}}</strong></p>
+                  <p>Photo :
+                        {% if object.photo %}
+                            <img src="{{ object.photo.url }}" class="img-responsive">
+                        {% else %}
+                            <strong>No image to display</strong>
+                        {% endif %}
+                  </p>
+                 <p>Membership Category: <strong>{{object.category}}</strong></p>
+                <p>Active or Inactive: <strong>{{object.is_active|yesno:"Active,Inactive"}}</strong></p>
+
+           <h4><strong>Academic Information</strong></h4>
+              <p>Admission Session: <strong>{{object.admission_session}}</strong></p>
+              <p>Degree Obtained: <strong>{{object.degree_obtained}}</strong></p>
+              <p>Passing Year: <strong>{{object.passing_year}}</strong></p>
+
+            <h4><strong>Official Information</strong></h4>
+              <p>Profession: <strong>{{object.profession}}</strong></p>
+              <p>Designation: <strong>{{object.Designation}}</strong></p>
+              <p>Organisation: <strong>{{object.organization}}</strong></p>
+              <p>Official Address: <strong>{{object.official_address}}</strong></p>
+               <p>Office Phone: <strong>{{object.office_phone}}</strong></p>
+                 <p>Office Mobile: <strong>{{object.office_mobile}}</strong></p>
+                <p>Office Email: <strong>{{object.office_email}}</strong></p>
+              <p>Office Fax: <strong>{{object.office_fax}}</strong></p>
+              <p>Website: <strong>{{object.website}}</strong></p>
+
+              <h4><strong>Bank Detail</strong></h4>
+              <p>Payment No.: <strong>{{object.payment_number}}</strong></p>
+                <p>Bank Name.: <strong>{{object.bank_name}}</strong></p>
+                <p>Branch Name: <strong>{{object.branch_name}}</strong></p>
+            <h4><strong>Personal Information</strong></h4>
+                 <p>Mother Name: <strong>{{object.mother_name}}</strong></p>
+                <p>Father Name: <strong>{{object.father_name}}</strong></p>
+                <p>Married?: <strong>{{object.is_married|yesno:"Married,Unmarried"}}</strong></p>
+                <p>National ID: <strong>{{object.national_id_no}}</strong></p>
+                <p> Passport No: <strong>{{object.passport_no}}</strong></p>
+                <p>Spouse Name: <strong>{{object.spouse_name}}</strong></p>
+                <p>Spouse Blood Group: <strong>{{object.spouse_blood_group}}</strong></p>
+               </div>
+            </div>
+
+
+
+  </div> <!-- row -->
+
+    {% if person.children_set.all or perms.blog.view_future_post and person.blog_posts.all or person.published_posts|length > 0 or perms.member.add_children %}
+     <div class="row">
+
+  <div class="col-sm-6">
+     <div class="other-detail">
+        <h4><strong>Children Information</strong></h4>
+
+      {% if person.children_set.all %}
+        {% if perms.blog.view_future_post and person.blog_posts.all or person.published_posts|length > 0 %}
+          <section class="meta offset-by-two one-third column">
+        {% else %}
+          <section class="meta offset-by-two two-thirds column">
+        {% endif %}
+
+
+             <!--Child information-->
+            <div style="overflow-x:auto;">
+               <table class="children">
+        <thead>
+            <tr>
+                <th class="row-1 row-ID">Sl.No.</th>
+                <th class="row-2 row-name">Name</th>
+              <th class="row-3 row-period">Date of Birth</th>
+                <th class="row-4 row-contact">Blood Group</th>
+            </tr>
+        </thead>
+
+
+
+     {% for child in person.children_set.all %}
+
+        <tbody>
+            <tr>
+                <td>{{forloop.counter}}.</td>
+                <td>{{ child.child_name|title }}</td>
+              <td>{{ child.child_birth_date}}</td>
+              <td>{{ child.blood_group}}</td>
+
+                  {% if perms.member.change_children or perms.member.delete_children %}
+
+                      {% if perms.member.change_children %}
+                        <td>
+                          <a
+                              href="{{ child.get_update_url }}">
+                             <button type="submit" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-pencil">Edit</span>
+                    </button></a></td>
+                      {% endif %}
+                      {% if perms.member.delete_children %}
+                        <td>
+                          <a
+                              href="{{ child.get_delete_url }}">
+                             <button type="submit" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-trash">Delete</span>
+                    </button></a></td>
+                      {% endif %}
+
+                  {% endif %}
+              </tr>
+
+
+
+              {% endfor %}
+
+            </tbody>
+
+                 </table>
+                </div>
+
+            {% else %}
+            <p><strong>No children in the list.</strong></p>
+
+
+      {% endif %}
+
+
+
+    </div> <!-- row -->
+    </div>
+       </div>
+  {% endif %}
+  <div><br><br></div>
+</div>
+
+
+
+<div><br><br></div>
+
+{% endblock %}

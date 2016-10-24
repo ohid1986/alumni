@@ -1,0 +1,75 @@
+{% extends parent_template|default:"member/base_member.html" %}
+
+{% block title %}
+{{ block.super }} - Events
+{% endblock %}
+
+
+{% block page_header %}
+<div role="navigation" aria-label="breadcrumbs navigation">
+    <ol class="breadcrumb">
+      <li class="active">Event</li>
+    </ol>
+  {% if perms.member.add_event %}
+    <div class="col-sm-6 pull-right">
+    <a class="btn btn-primary "
+        href="{% url 'member:member_event_create' %}"><i class="icon-plus icon-white"></i>Create New Event</a>
+        </div>
+  {% endif %}
+  <h3>Event List</h3>
+</div>
+
+{% endblock page_header %}
+
+{% block org_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+
+    <div style="overflow-x:auto;">
+
+    <table class="table table-striped">
+        <tr>
+            <th>Event</th>
+        </tr>
+        {% for event in event_list %}
+      <tr>
+            <td><a href="{{ event.get_absolute_url }}">
+              {{ event.name|title }}</a></td>
+            {% if perms.member.change_event or perms.member.delete_event %}
+
+                {% if perms.member.change_event %}
+                  <td>
+                    <a href="{{ event.get_update_url }}">
+                <button type="submit" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-pencil">Edit</span>
+                </button></a></td>
+
+                {% endif %}
+                {% if perms.member.delete_event %}
+                  <td>
+                    <a
+                        href="{{ event.get_delete_url }}">
+                        <button type="submit" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-trash">Delete</span>
+                </button></a></td>
+                {% endif %}
+
+            {% endif %}
+
+        {% empty %}
+          <em>No Events Available</em>
+        {% endfor %}
+        </tr>
+
+      </table>
+
+    </div>
+        </div>
+        </div>
+</div>
+
+
+
+
+{% endblock %}

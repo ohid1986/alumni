@@ -1,0 +1,27 @@
+{% extends parent_template|default:"member/base_member.html" %}
+
+{% block body %}
+
+<div class="container-fluid">
+
+        <div class="row">
+            <div class="col-sm-12 col-md-7">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                    <h4>Do you want to delete Member: <strong>{{person.name|title}}?</strong></h4>
+                        <form action="" method="post">
+                            {% csrf_token %}
+                           <button class="btn btn-warning btn-sm">Delete</button>
+                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
+
+

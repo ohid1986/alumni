@@ -1,0 +1,90 @@
+{% extends parent_template|default:"member/base_member.html" %}
+
+{% block body %}
+
+   <div role="navigation" aria-label="breadcrumbs navigation">
+           <ul class="breadcrumb"><li class="active">Executive Member</li>
+        </ul>
+        {% if perms.member.add_exec_member %}
+            <a class="btn btn-primary pull-right" href="{% url 'member:execomember-create' %}"><i class="icon-plus icon-white"></i> Add New Executive Member</a>
+            {% endif %}
+        <h3>Executive Members List</h3>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+
+    <div class="col-sm-8 col-md-9">
+
+     {% if members %}
+    <div style="overflow-x:auto;">
+    <table class="members">
+        <thead>
+            <tr>
+                <th class="row-1 row-ID">Sl.No.</th>
+                <th class="row-2 row-name">Name & Designation</th>
+                <th class="row-3 row-photo">Photo</th>
+                <th class="row-4 row-period">Member Period</th>
+                <th class="row-5 row-contact">Contact</th>
+            </tr>
+        </thead>
+
+
+        {% for exec in members %}
+        <tbody>
+            <tr>
+                <td>{{forloop.counter}}.</td>
+                <td>{{exec.name}}<br>
+                {{exec.committee_position}}
+                </td>
+                <td><a href="{{exec.get_absolute_url}}">
+                <img src="{{ exec.name.photo_url|default_if_none:'#'}}" class="img-responsive">
+                    </a></td>
+                <td>
+                {{exec.member_start_date }}<br>
+               {{exec.member_end_date}}<br>
+               <strong>{{exec.is_active|yesno:"Active,Expired"}}</strong>
+                </td>
+
+                <td>
+                    {{ exec.name.tele_land }}<br>
+                    {{ exec.name.tele_cell }}<br>
+                    {{ exec.name.user }}
+
+
+                </td>
+                {% if perms.member.change_exec_member or perms.member.delete_exec_member %}
+
+                  {% if perms.member.change_exec_member %}
+                    <td>
+                      <a
+                          href="{{ exec.get_update_url }}">
+                          <button type="submit" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-pencil">Edit</span>
+                    </button></a></td>
+                  {% endif %}
+                  {% if perms.member.delete_exec_member %}
+                    <td>
+                      <a
+                          href="{{ exec.get_delete_url }}">
+                         <button type="submit" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-trash">Delete</span>
+                    </button></a></td>
+                  {% endif %}
+
+                {% endif %}
+            </tr>
+        </tbody>
+        {% endfor %}
+
+    </table>
+        </div>
+    {% else %}
+        <p>No member in the list.</p>
+    {% endif %}
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+

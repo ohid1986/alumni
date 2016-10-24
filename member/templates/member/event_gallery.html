@@ -1,0 +1,41 @@
+{% extends parent_template|default:"member/base_member.html" %}
+
+{% block title %}Event Gallery{% endblock title %}
+
+{% block body %}
+
+    <div role="navigation" aria-label="breadcrumbs navigation">
+        <ol class="breadcrumb">
+          <li><a href="{% url 'member:event-list' %}">Event</a></li>
+          <li class="active">Gallery</li>
+        </ol>
+        <a class="btn btn-primary pull-right" href="{% url 'member:event-list' %}"><i class="icon-plus icon-white"></i> Go back to event list</a>
+        <h1>Photo Gallery</h1>
+    </div>
+    <div class="container-photo">
+    <div class="row">
+
+    {% for event in events %}
+        <div class="photo">
+         <div class="col-xs-12">
+            <h5> Event Name: {{ event.name }}</h5>
+        </div>
+
+        {% for gallery in event.gallery_set.all %}
+
+            <div>
+                        <p >
+                            {% if gallery.image %}
+                             <img src="{{ gallery.image.url}}" class="img-responsive" >
+                        {% endif %}
+                        </p>
+
+                    </div>
+        {% endfor %}
+            </div>
+    {% endfor %}
+
+</div>
+</div>
+
+{% endblock %}

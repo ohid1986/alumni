@@ -1,0 +1,16 @@
+*.pyc
+db.sqlite3
+projects
+__pycache__
+bash.txt
+bash_profile
+settings_old.py
+local_settings.py
+dev.py
+
+.DS_Store
+
+
+test_venv
+
+local_settings.py

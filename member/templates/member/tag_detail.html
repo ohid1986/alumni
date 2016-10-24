@@ -1,0 +1,76 @@
+{% extends parent_template|default:"member/base_member.html" %}
+{% load partial_post_list %}
+
+{% block title %}
+{{ block.super }} - {{ tag.name|title }}
+{% endblock %}
+
+
+{% block page_header %}
+<div role="navigation" aria-label="breadcrumbs navigation">
+    <ul class="breadcrumb">
+      <li><a href="{% url 'member:member_tag_list' %}">Tag</a></li>
+      <li class="active">{{ object.name }}</li>
+    </ul>
+  {% if perms.member.change_tag or perms.member.delete_tag %}
+    <div class="row">
+        <div class="col-sm-3 pull-left">
+      {% if perms.member.change_tag %}
+
+          <a class="btn btn-primary pull-right" href="{{ tag.get_update_url }}"><i class="icon-edit icon-white"></i> Edit Current Tag</a>
+
+
+      {% endif %}
+            </div>
+        <div class="col-sm-6 pull-right">
+      {% if perms.member.delete_tag %}
+
+          <a class="btn btn-primary "
+              href="{{ tag.get_delete_url }}">
+              <i class="icon-edit icon-white"></i> Delete Current Tag</a>
+
+
+      {% endif %}
+        </div>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock page_header %}
+
+{% block org_content %}
+  <h2>{{ tag.name|title }}</h2>
+
+  {% if tag.event_set.all %}
+    <section>
+      <h3>Event{{ tag.event_set.count|pluralize }}</h3>
+      <p>
+        Tag is associated with
+        {{ tag.event_set.count }}
+        event{{ tag.event_set.count|pluralize }}.
+      </p>
+      <ul>
+        {% for event in tag.event_set.all %}
+          <li><a href="{{ event.get_absolute_url }}">
+            {{ event.name }}
+          </a></li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+
+
+  {% format_post_list tag opposite=tag.post_set.all perm_button=perms.blog.add_post %}
+
+
+  {% if not perms.blog.view_future_post or not tag.blog_posts.all %}
+    {% if not tag.published_posts|length > 0 %}
+      {% if not tag.event_set.all %}
+        <p>This tag is not related to any content.</p>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+
+
+{% endblock %}

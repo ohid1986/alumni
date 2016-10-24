@@ -1,0 +1,103 @@
+{% extends parent_template|default:"blog/base_blog.html" %}
+
+{% block title %}
+{{ block.super }} - Blog
+{% endblock %}
+
+{% block body %}
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+    <ul class="breadcrumb">
+      <li class="active">News</li>
+    </ul>
+    <div class="col-sm-6 pull-right">
+  {% if perms.blog.add_post %}
+    <a class="btn btn-primary"
+          href="{% url 'blog_post_create' %}">
+        Write New News</a>
+  {% endif %}
+      </div>
+
+
+  <h3>News List</h3>
+</div>
+
+<div class="container">
+  <div class="row">
+
+
+    <div class="col-sm-8">
+       {% for post in post_list %}
+        <article class="list-item">
+          <div class="row-header">
+            <h2>
+              <a href="{{ post.get_absolute_url }}">
+                {{ post.title|title }}</a>
+            </h2>
+
+
+            {% if perms.blog.change_post or perms.blog.delete_post %}
+
+              <ul class="inline">
+                {% if perms.blog.change_post %}
+                <li>
+                    <a href="{{ post.get_update_url }}">
+                  <button type="submit" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-pencil">Edit This Post</span>
+                </button></a>
+
+
+
+
+            </li>
+          {% endif %}
+          {% if perms.blog.delete_post %}
+            <li>
+              <a href="{{ post.get_delete_url }}">
+                   <button type="submit" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-trash"> Delete This Post</span>
+                </button></a>
+               </li>
+
+                {% endif %}
+              </ul>
+            {% endif %}
+
+          </div>
+            <div><br></div>
+
+          <p>{{ post.text|truncatewords:20 }}</p>
+          <p class="read-more">
+            <a href="{{ post.get_absolute_url }}">
+              Read more&hellip;</a>
+          </p>
+          <p>
+              Written on:
+              <time datetime="{{ post.pub_date|date:"Y-m-d" }}">
+                {{ post.pub_date|date:"l, F j, Y" }}
+              </time>
+              by
+              <a href="{{ post.author.get_absolute_url }}">
+                {{ post.author.profile.name }}</a>
+            </p>
+        </article>
+      {% empty %}
+        <p><em>No Blog Posts Available</em></p>
+      {% endfor %}
+    </div><!-- eight columns -->
+    <div class="col-sm-4">
+
+      <h3>News Archives</h3>
+      <ul>
+        {% for y in date_list %}
+          <li><a href="{% url 'blog_post_archive_year' y|date:'Y' %}">
+            {{ y|date:"Y" }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div><!-- row -->
+  </div>
+<div></div>
+
+{% endblock %}

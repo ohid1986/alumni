@@ -1,0 +1,26 @@
+{% extends parent_template|default:"member/base_member.html" %}
+
+{% block body %}
+<div role="navigation" aria-label="breadcrumbs navigation">
+                   <ol class="breadcrumb">
+              <li class="active">Membership</li>
+            </ol>
+            <h1>Membership Category</h1>
+        </div>
+
+    <div class="container-fluid">
+        <div class="row">
+
+
+
+        <div class="col-sm-8 col-md-9">
+
+    {% for entry in entries %}
+            <p>{{entry.category}}.</p>
+     {% endfor %}
+
+    </div>
+    </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends parent_template|default:"member/base_member.html" %}
+
+
+{% load partial_post_list %}
+
+{% block title %}
+{{ block.super }} - {{ event.name }}
+{% endblock %}
+
+{% block page_header %}
+<div role="navigation" aria-label="breadcrumbs navigation">
+    <ul class="breadcrumb">
+      <li><a href="{% url 'member:event-list' %}">Event</a></li>
+      <li class="active">{{ object.name }}</li>
+    </ul>
+  {% if perms.member.change_event or perms.member.delete_event %}
+    <div class="row">
+        <div class="col-sm-3 pull-left">
+      {% if perms.member.change_event %}
+
+          <a class="btn btn-primary pull-right" href="{{ event.get_update_url }}"><i class="icon-edit icon-white"></i> Edit Event and Gallery</a>
+
+
+      {% endif %}
+            </div>
+        <div class="col-sm-6 pull-right">
+      {% if perms.member.delete_event %}
+
+          <a class="btn btn-primary "
+              href="{{ event.get_delete_url }}">
+              <i class="icon-edit icon-white"></i> Delete Event</a>
+
+
+      {% endif %}
+        </div>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock page_header %}
+
+
+{% block body %}
+     <div class="col-xs-12">
+            <p>Event Name: {{ object.name|title }}</p>
+            <p>Event Description: {{object.description }}</p>
+           <h4> Event Gallery</h4>
+        </div>
+
+    <div class="container-photo">
+    <div class="row">
+
+
+
+        <div class="photo">
+        {% for gallery in event.gallery_set.all %}
+
+            <div>
+                <p>
+                    {% if gallery.image %}
+                     <img src="{{ gallery.image.url}}" class="img-responsive" >
+                {% endif %}
+                </p>
+
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+  <dl>
+    <dt>Created on: </dt>
+      <dd>{{ event.created|date:"F jS, Y" }}</dd>
+
+
+    {% with tag_list=event.tags.all %}
+      <dt>Tag:{{ tag_list|pluralize }}</dt>
+        {% for tag in tag_list %}
+          <dd><a href="{{ tag.get_absolute_url }}">
+            {{ tag.name|title }}
+          </a></dd>
+        {% endfor %}
+    {% endwith %}
+
+    <dt>Feeds</dt>
+      <dd>
+        <a class="feed" href="{{ event.get_feed_atom_url }}">
+          Atom</a></dd>
+      <dd>
+        <a class="feed" href="{{ event.get_feed_rss_url }}">
+          RSS</a></dd>
+
+   </dl>
+
+
+
+
+    {% if event.gallery_set.all or perms.blog.view_future_post and event.blog_posts.all or event.published_posts|length > 0 or perms.member.add_gallery %}
+    <div class="row col-xs-12">
+
+      {% if event.gallery_set.all %}
+        {% if perms.blog.view_future_post and event.blog_posts.all or event.published_posts|length > 0 %}
+          <section class="meta offset-by-two one-third column">
+        {% else %}
+          <section class="meta offset-by-two two-thirds column">
+        {% endif %}
+            <h3>Recent Gallery</h3>
+
+            <ul>
+              {% for gallery in event.gallery_set.all|slice:":5" %}
+                <li>
+
+                    <a href="{{ gallery.get_absolute_url}}">
+                    {{ gallery.title|title }}</a>
+
+                </li>
+              {% endfor %}
+            </ul>
+          </section>
+      {% elif perms.member.add_gallery %}
+        {% if perms.blog.view_future_post and event.blog_posts.all or event.published_posts|length > 0 %}
+          <section class="meta offset-by-two one-third column">
+        {% else %}
+          <section class="meta offset-by-two two-thirds column">
+        {% endif %}
+
+          </section>
+      {% endif %}
+
+
+
+    </div> <!-- row -->
+</div>
+  {% endif %}
+
+
+
+
+
+
+
+
+{% endblock %}

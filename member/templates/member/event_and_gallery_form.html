@@ -1,0 +1,62 @@
+{% extends parent_template|default:"member/base_member.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add{% endif %} Event and Gallery{% endblock title %}
+
+{% block link %}{{ block.super }}
+    <style type="text/css">
+    .errorlist {
+        list-style: none;
+        color: #B94A48;
+        margin: 0px 0px 9px 0px;
+        padding: 0px;
+    }
+    </style>
+{% endblock link %}
+
+{% block bottom_script %}{{ block.super }}
+
+{% endblock bottom_script %}
+
+
+{% block body %}
+
+<div class="page-header">
+  <h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Event and Gallery</h1>
+</div>
+
+<div class="container-fluid">
+
+        <div class="row">
+            <div class="col-sm-12 col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+
+                    <form action="." method="post" enctype="multipart/form-data">
+                        {{ formset.management_form }}
+                        {% csrf_token %}
+
+                        <legend>Event</legend>
+                        <div class="event">
+                        {{ form|crispy}}
+                        </div>
+
+                        <legend>
+                            <div class="pull-right"><a href="#" class="btn btn-inverse add-photo"><i class="icon-plus icon-white"></i> Add Photo</a></div>
+                            Photo Gallery
+                        </legend>
+                        <div class="gallery form-inline">
+                            {% for form in formset %}
+                                {{ form|crispy }}
+                            {% endfor %}
+                        </div>
+                      <div class="form-actions">
+                         <button type="submit" class="btn btn-primary">Save</button>
+                       </div>
+                     </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

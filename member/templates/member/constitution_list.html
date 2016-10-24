@@ -1,0 +1,65 @@
+{% extends parent_template|default:"member/base_member.html" %}
+
+{% block body %}
+
+ {% if perms.member.add_constitution %}
+
+       <div role="navigation" aria-label="breadcrumbs navigation">
+           <ul class="breadcrumb"><li class="active">Constitution</li>
+
+        </ul>
+            <a class="btn btn-primary pull-right" href="{% url 'member:cons-create' %}"><i class="icon-plus icon-white"></i> Add Constitution</a>
+            <h1>Constitution</h1>
+    </div>
+{% endif %}
+
+    <div class="container-fluid">
+        <div class="row">
+
+
+        <div class="col-sm-8 col-md-9">
+
+
+
+            {% if documents %}
+
+                {% for document in documents %}
+                        <p>{{document.title}}</p>
+                        <p>{{document.content}}</p>
+
+                       {% if document.docfile %}
+                       <a href="{{ document.docfile.url }}">{{ document.docfile.name}}</a>
+                        {% endif %}
+
+                    {% if perms.member.change_constitution or perms.member.delete_constitution %}
+                         {% if perms.member.change_constitution %}
+                        <a href="{{document.get_update_url}}">
+                            <button type="button" class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-pencil"></span>Update
+                            </button>
+                        </a>
+                        {% endif %}
+
+                         {% if perms.member.delete_constitution %}
+                        <a href="{{document.get_delete_url}}">
+                        <button type="submit" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-trash">Delete</span>
+                        </button>
+                        </a>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+            {% else %}
+                <p>No documents.</p>
+            {% endif %}
+
+
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+
+
+

@@ -1,0 +1,17 @@
+{% extends parent_template|default:"user/base_user.html" %}
+
+{% block title %}
+{{ block.super }} - Account Created
+{% endblock %}
+
+{% block body %}
+ <div class="container">
+  <div class='row-content'>
+    <div class='col-sm-4 '>
+    <p class='lead'>Your account has been created!</p>
+      <p>Please check your email for
+        the activation link.</p>
+    </div>
+  </div>
+   </div>
+{% endblock %}

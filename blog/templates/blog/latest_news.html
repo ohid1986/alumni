@@ -1,0 +1,25 @@
+{% block right_top_block %}
+
+<div class="right_top_block ">
+   <div  class="center-block bg-success text-primary box" style="width:105px; height:25px; padding-top:3px; padding-left:10px; margin:auto;">
+    <p><strong >Latest News</strong></p>
+</div>
+    <div class="news">
+        {% for post in post_list %}
+
+
+      <h5><strong>{{ post.title }}</strong></h5>
+            {{ post.text|truncatechars:200  }}
+            <p><a class="btn btn-primary btn-xs" href="{{ post.get_absolute_url }}">See Datails &raquo;</a></p>
+
+
+
+        {% empty %}
+           No recent news
+        {% endfor %}
+    </div>
+</div>
+
+
+
+{% endblock %}

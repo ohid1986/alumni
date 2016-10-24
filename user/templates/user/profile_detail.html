@@ -1,0 +1,55 @@
+{% extends parent_template|default:"user/base_user.html" %}
+
+{% block title %}
+{{ block.super }} -
+{{ profile.user.get_full_name }}'s Profile
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class='row'>
+    <div class='col-sm-6 '>
+    {% if user.pk == profile.user.pk %}
+      <div class="offset-by-two five columns">
+    {% else %}
+      <div class="offset-by-two eight columns">
+    {% endif%}
+
+    <h2>About {{ profile.user.get_full_name }}</h2>
+    {{ profile.about|default:"No Profile"|linebreaks }}
+
+    {% if profile.user.member_persons.all %}
+
+        {% for person in profile.user.member_persons.all %}
+
+            <div class="col-xs-4 col-sm-3">
+            <ul class="nav nav-pills" style="margin-bottom: 10px;">
+                <li role="presentation" class="active">  <a href="{{ person.get_absolute_url }}">Details
+            </a></li>
+            </ul>
+        </div>
+          {% endfor %}
+
+
+    {% endif %}
+
+    </div><!-- columns -->
+
+    {% if user.pk == profile.user.pk %}
+      <div class="col-xs-4 ">
+        <ul class="task-list">
+          <li><a href="{{ profile.get_update_url }}">
+            Edit Your Profile</a></li>
+          <li><a href="{% url 'dj-auth:pw_change' %}">
+            Change Password</a></li>
+          <li><a href="{% url 'dj-auth:disable' %}">
+            Disable Account</a></li>
+        </ul>
+      </div>
+    {% endif%}
+
+  </div><!-- row -->
+    </div>
+  </div>
+    </div>
+{% endblock %}

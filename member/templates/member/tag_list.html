@@ -1,0 +1,79 @@
+{% extends parent_template|default:"member/base_member.html" %}
+
+
+{% block title %}
+{{ block.super }} - Tag List
+{% endblock %}
+
+{% block page_header %}
+<div role="navigation" aria-label="breadcrumbs navigation">
+    <ol class="breadcrumb">
+      <li class="active">Tag</li>
+    </ol>
+
+  {% if perms.member.add_tag %}
+    <div class="col-sm-6 pull-right">
+    <a class="btn btn-primary"
+        href="{% url 'member:member_tag_create' %}"><i class="icon-plus icon-white"></i>
+
+        Create New Tag</a>
+  </div>
+
+  {% endif %}
+  <h3>Tag List</h3>
+</div>
+
+{% endblock page_header %}
+
+{% block org_content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+
+<div style="overflow-x:auto;">
+<table class="table table-striped">
+
+  <tr>
+        <th>Tag</th>
+    </tr>
+
+
+    {% for tag in tag_list %}
+      <tr>
+        <td><a href="{{ tag.get_absolute_url }}">
+          {{ tag.name|title }}</a></td>
+        {% if perms.member.change_tag or perms.member.delete_tag %}
+
+          {% if perms.member.change_tag %}
+            <td>
+              <a
+                  href="{{ tag.get_update_url }}">
+                  <button type="submit" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-pencil">Edit</span>
+            </button></a></td>
+          {% endif %}
+          {% if perms.member.delete_tag %}
+            <td>
+              <a
+                  href="{{ tag.get_delete_url }}">
+                 <button type="submit" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-trash">Delete</span>
+            </button></a></td>
+          {% endif %}
+
+        {% endif %}
+      </tr>
+    {% empty %}
+      <em>There are currently no Tags available.</em>
+    {% endfor %}
+
+  </table>
+</div>
+    </div>
+        </div>
+</div>
+<div><br><br></div>
+
+
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends parent_template|default:"member/base_member.html" %}
+
+{% block body %}
+<div role="navigation" aria-label="breadcrumbs navigation">
+    <ol class="breadcrumb">
+      <li><a href="{% url 'member:execomember-list' %}">Executive Member</a></li>
+      <li class="active">{{ object.committee_position }}</li>
+    </ol>
+    {% if perms.member.change_exec_member or perms.member.delete_exec_member %}
+         <div class="row">
+        <div class="col-sm-3 col-sm-offset-1">
+                  {% if perms.member.change_exec_member %}
+
+                      <a
+                          href="{{ object.get_update_url }}">
+                          <button type="submit" class="btn btn-primary btn-sm">
+                        <span class="glyphicon glyphicon-pencil">Edit</span>
+                    </button></a>
+                  {% endif %}
+            </div>
+        <div class="col-sm-7 col-offset-sm-4">
+                  {% if perms.member.delete_exec_member %}
+
+                      <a
+                          href="{{ object.get_delete_url }}">
+                         <button type="submit" class="btn btn-primary btn-sm">
+                        <span class="glyphicon glyphicon-trash">Delete</span>
+                    </button></a>
+                  {% endif %}
+
+                {% endif %}
+             </div>
+    </div>
+</div>
+
+<div><br></div>
+
+<div class="container-fluid ">
+    <div class="row">
+        <!-- Left Album Info -->
+        <div class="col-sm-6 col-md-4">
+            <div class="member-detail">
+
+                <p>Name: <strong>{{object.name}}</strong></p>
+                 <p>committee_position:<strong>{{object.committee_position}}</strong> </p>
+                 <p>Start Date of Membership: <strong>{{object.member_start_date}}</strong></p>
+                 <p>End Date of Membership: <strong>{{object.member_end_date}}</strong></p>
+                 <p>Active or Inactive:<strong>{{object.is_active|yesno:"Active,Inactive"}}</strong> </p>
+                <p>Photo :
+                        {% if object.name.photo %}
+                            <img src="{{ object.name.photo.url }}" class="img-responsive">
+                        {% else %}
+                            <h3>No image to display</h3>
+                        {% endif %}
+                  </p>
+
+
+               </div>
+            </div>
+        </div>
+
+    </div>
+<div><br><br></div>
+
+{% endblock %}

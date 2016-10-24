@@ -1,0 +1,25 @@
+{% extends parent_template|default:"user/base_user.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{{ block.super }} - Resend Activation E-Mail
+{% endblock %}
+
+{% block body %}
+  <div class="container">
+  <div class='row'>
+    <div class='col-sm-4 '>
+      <div class="center">
+        <p>Resend your account activation email.</p>
+      </div>
+      <form
+          action="{% url 'dj-auth:resend_activation' %}"
+          method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit">
+          Resend Activation E-Mail</button>
+      </form>
+  </div>
+  </div></div>
+{% endblock %}

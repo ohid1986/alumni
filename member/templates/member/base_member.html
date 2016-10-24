@@ -1,0 +1,75 @@
+{% extends parent_template|default:"base.html" %}
+
+{% load blog_latest %}
+
+{% block page_header %}
+
+{% endblock page_header %}
+
+{% block body %}
+<div class="container">
+  <div class="row">
+  <div class="col-xs-12">
+
+    <div class="col-sm-7">
+      {% block org_content %}
+        This is default content!
+      {% endblock %}
+    </div>
+
+
+    <div  class="col-sm-5">
+      {% block create_button %}{% endblock %}
+      {% get_latest_posts 5 as custom_post_list %}
+      <div class="latest_posts">
+        <h4>Latest News</h4>
+        <ul>
+          {% for latest_post in custom_post_list %}
+            <li><a href="{{ latest_post.get_absolute_url }}">
+              {{ latest_post.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+  </div>
+    </div>
+  </div>
+  {% if is_paginated %}
+    <div class="row">
+      <div class="col-sm-12">
+        <ul class="pagination">
+          {% if first_page_url %}
+            <li>
+              <a href="{{ first_page_url }}">
+                First</a>
+            </li>
+          {% endif %}
+          {% if previous_page_url %}
+            <li>
+              <a href="{{ previous_page_url }}">
+                Previous</a>
+            </li>
+          {% endif %}
+          <li>
+            Page {{ page_obj.number }}
+            of {{ paginator.num_pages }}
+          </li>
+          {% if next_page_url %}
+            <li>
+              <a href="{{ next_page_url }}">
+                Next</a>
+            </li>
+          {% endif %}
+          {% if last_page_url %}
+            <li>
+              <a href="{{ last_page_url }}">
+                Last</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+
+{% endblock %}

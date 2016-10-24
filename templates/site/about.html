@@ -1,0 +1,24 @@
+{% extends parent_template|default:"base.html" %}
+
+{% block title %}
+{{ block.super }} - About
+{% endblock %}
+
+{% block body %}
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+        <ul class="breadcrumb">About</li>
+        </ul>
+    </div>
+
+  <div class="container">
+    <div class="row row-content">
+        <div class="col-xs-12 col-sm-9 ">
+            <h1>About</h1>
+      <p>This website is built in <a href="https://www.djangoproject.com">Django</a></p> and on <a href="https://www.python.org">Python 3.5 platform </a>
+      <p>The site design is based on the  <a href="http://getbootstrap.com">Bootstrap</a> responsive framework.
+            </div>
+        </div>
+        </div>
+
+{% endblock %}

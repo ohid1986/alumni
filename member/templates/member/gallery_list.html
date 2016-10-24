@@ -1,0 +1,51 @@
+{% extends parent_template|default:"member/base_member.html" %}
+
+{% block title %}
+{{ block.super }} -Gallery
+{% endblock title %}
+
+
+{% block page_header %}
+<div role="navigation" aria-label="breadcrumbs navigation">
+    <ol class="breadcrumb">
+      <li class="active">Gallery</li>
+    </ol>
+    <a class="btn btn-primary pull-center" href="{% url 'member:event-gallery' %}"><i class="icon-plus icon-white"></i> View All </a>
+    {% if request.user.is_authenticated and perms.member.add_event or perms.member.add_gallery %}
+    <a class="btn btn-primary pull-right" href="{% url 'member:member_event_create' %}"><i class="icon-plus icon-white"></i> Add Event and Photo</a>
+   {% endif %}
+    <h1>Gallery</h1>
+</div>
+
+{% endblock page_header %}
+
+{% block org_content %}
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+
+<div style="overflow-x:auto;">
+<table class="table table-striped">
+    <tr>
+        <th>Photo</th>
+        <th>Event</th>
+    </tr>
+    {% for object in object_list %}
+    <tr>
+        <td><a href="{{ object.get_absolute_url }}">{{ object.title }}</a></td>
+        <td><a href="{{ object.event.get_absolute_url }}">{{ object.event }}</a></td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+    </div>
+        </div>
+        </div>
+</div>
+
+
+{% endblock %}

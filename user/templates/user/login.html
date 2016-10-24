@@ -1,0 +1,31 @@
+{% extends parent_template|default:"user/base_user.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+{{ block.super }} - Login
+{% endblock %}
+
+{% block body %}
+  <div class="container">
+  <div class='row'>
+    <h1 >Login </h1>
+    <div class='col-sm-3'>
+      {% include "user/login_form.html" %}
+    </div>
+    <div class="col-sm-3">
+      <div class='text-align-center'>
+        <div><br></div>
+      <ul class="task-list">
+        <li><a href="{% url 'dj-auth:create' %}">
+          Register New Account</a></li>
+        <li><a href="{% url 'dj-auth:pw_reset_start' %}">
+          Forgotten password?</a></li>
+        <li><a href="{% url 'dj-auth:resend_activation' %}">
+          Lost Activation E-Mail?</a></li>
+      </ul>
+    </div>
+      </div>
+  </div>
+    </div>
+{% endblock %}

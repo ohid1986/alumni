@@ -1,0 +1,39 @@
+{% extends parent_template|default:"member/base_member.html" %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+    <form class="navbar-search pull-left" method="GET" action="">
+    <input type="text" value="" placeholder="Search" name="q">
+        <button type="submit" class="btn btn-default">Search</button>
+    </form>
+
+    <!--<p>You searched for: <strong>{{ query }}</strong></p>-->
+
+        <!--{% if query %}-->
+            <!--<h2>Results for "{{ query|escape }}":</h2>-->
+            <!--{% if results %}-->
+            <!--<ul>-->
+                <!--{% for person in results %}-->
+                <!--<li>{{ person.name|escape }}</li>-->
+                <!--{% endfor %}-->
+            <!--</ul>-->
+            <!--<p>No persons found</p>-->
+            <!--{% endif %}-->
+        <!--{% endif %}-->
+
+
+<p>You searched for: <strong>{{ query }}</strong></p>
+
+        {% if books %}
+            <p>Found {{ books|length }} book{{ books|pluralize }}.</p>
+            <ul>
+                {% for book in books %}
+                <li>{{ book.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No books matched your search criteria.</p>
+        {% endif %}
+
+
+{% endblock %}
