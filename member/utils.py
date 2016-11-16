@@ -7,7 +7,50 @@ from django.http import (
 
 from django.http import HttpResponse
 
-from .models import Event
+from .models import Event, Person, Child
+
+class ChildrenFormMixin():
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if self.request.method in ('POST', 'PUT'):
+            self.person = get_object_or_404(
+                Person,
+                slug__iexact=self.kwargs.get(
+                    self.person_slug_url_kwarg))
+            data = kwargs['data'].copy()
+            data.update({'person': self.person})
+            kwargs['data'] = data
+        return kwargs
+
+class ChildrenGetObjectMixin():
+
+    def get_object(self, queryset=None):
+        person_slug = self.kwargs.get(
+            self.person_slug_url_kwarg)
+        child_slug = self.kwargs.get(
+            self.slug_url_kwarg)
+        return get_object_or_404(
+            Child,
+            slug__iexact=child_slug,
+            person__slug__iexact=person_slug)
+
+class PersonContextMixin():
+    person_slug_url_kwarg = 'person_slug'
+    person_context_object_name = 'person'
+
+    def get_context_data(self, **kwargs):
+
+        person_slug = self.kwargs.get(
+            self.person_slug_url_kwarg)
+        person = get_object_or_404(
+            Person, slug__iexact=person_slug)
+        context = {
+            self.person_context_object_name:
+                person,
+        }
+        context.update(kwargs)
+        return super().get_context_data(**context)
 
 
 class FormsetMixin(object):
@@ -149,3 +192,5 @@ class EventContextMixin():
             }
         context.update(kwargs)
         return super().get_context_data(**context)
+
+

@@ -13,9 +13,10 @@ from autoslug import AutoSlugField
 import datetime
 from datetime import date
 # Create your models here.
-phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
-                                 message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+phone_regex = RegexValidator(regex=r'^\+(?:[0-9]●?){6,14}[0-9]$',
+                                 message="Phone number format: '+999999999'. Up to 15 digits allowed.")
 
+# r'^\+?1?\d{9,15}$'
 class PersonManager(models.Manager):
 
     def get_by_natural_key(self, slug):
@@ -30,15 +31,16 @@ DEGREE_CHOICES = (
         )
 class Person(models.Model):
     YEAR_CHOICES = [(r, r) for r in range(1970, datetime.date.today().year + 1)]
-    name = models.CharField(max_length=250)
+    name = models.CharField(max_length=100)
     slug = AutoSlugField(populate_from='name')
-    name_in_bangla = models.CharField(max_length=250)
+    name_in_bangla = models.CharField(max_length=100)
     nick_name = models.CharField(max_length=30)
-    birth_date = models.DateField(null=True, blank=True)
-    blood_group = models.CharField(max_length=5)
+    birth_date = models.DateField()
+    blood_group = models.CharField(max_length=3,validators=[RegexValidator(
+                regex='^(A|B|AB|O)[+-]$',message='Blood group must be A|B|AB|O[+/-] format',),],)
     present_address = models.CharField(max_length=250, blank=True)
     permanent_address = models.CharField(max_length=250, blank=True)
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         related_name='member_persons')
     tele_land = models.CharField(max_length=15, validators=[phone_regex],blank=True)
@@ -48,7 +50,8 @@ class Person(models.Model):
         editable=True,
         help_text="Person Picture", validators=[file_size])
 
-    admission_session = models.CharField(max_length=10)
+    admission_session = models.CharField(max_length=9, validators=[RegexValidator(
+                regex='^(\d{4}-(\d{2}|\d{4}))$',message='Session format yyyy-yyyy not comply.',),],)
     degree_obtained = models.CharField(max_length=9,
                   choices=DEGREE_CHOICES,default="M.Sc")
     passing_year = models.IntegerField(('year'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
@@ -77,7 +80,8 @@ class Person(models.Model):
     national_id_no = models.IntegerField(unique=True)
     passport_no = models.CharField(max_length=15, null=True, blank=True)
     spouse_name = models.CharField(max_length=200, null=True, blank=True)
-    spouse_blood_group = models.CharField(max_length=5, null=True, blank=True)
+    spouse_blood_group = models.CharField(max_length=3,validators=[RegexValidator(
+                regex='^(A|B|AB|O)[+-]$',message='Blood group must be A|B|AB|O[+/-] format',),],null=True, blank=True)
     category = models.ForeignKey('Membership', on_delete=models.CASCADE)
 
     image_height = models.PositiveIntegerField(null=True, blank=True, editable=False, default="100")
@@ -88,33 +92,37 @@ class Person(models.Model):
 
     class Meta:
         ordering = ['name']
-        unique_together =['name','birth_date']
-
+        unique_together = ['name', 'birth_date']
 
     def get_absolute_url(self):
         return reverse('member:person-detail', kwargs={'slug': self.slug})
-
 
     def get_delete_url(self):
         return reverse('member:person-delete',
                        kwargs={'slug': self.slug})
 
+    def get_child_create_url(self):
+        return reverse(
+            'member:children-create',
+            kwargs={'person_slug': self.slug})
+
     def get_update_url(self):
         return reverse('member:person-update',
                        kwargs={'slug': self.slug})
 
-    def __str__(self):              # __unicode__ on Python 2
+    def __str__(self):  # __unicode__ on Python 2
         return self.name
+
+    def natural_key(self):
+        return (self.slug,)
 
     @property
     def photo_url(self):
         if self.photo and hasattr(self.photo, 'url'):
             return self.photo.url
 
-    def natural_key(self):
-        return (self.slug,)
 
-class ChildrenManager(models.Manager):
+class ChildManager(models.Manager):
 
     def get_by_natural_key(
             self, person_slug, slug):
@@ -122,29 +130,43 @@ class ChildrenManager(models.Manager):
             person__slug=person_slug,
             slug=slug)
 
-class Children(models.Model):
+class Child(models.Model):
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
-    child_name = models.CharField(max_length=150, null=True, blank=True)
-    slug = AutoSlugField(populate_from='child_name')
-    child_birth_date = models.DateField(null=True, blank=True)
-    blood_group = models.CharField(max_length=5, blank=True)
+    child_name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=50, help_text='Slug will automaticall created from Child Name. No need to type here.')
+    child_birth_date = models.DateField()
+    blood_group = models.CharField(max_length=3,validators=[RegexValidator(regex='^(A|B|AB|O)[+-]$',message='Blood group must be A|B|AB|O[+/-] format',),], blank=True)
 
-    objects = ChildrenManager()
+    objects = ChildManager()
+
+    class Meta:
+        verbose_name_plural = 'children'
+        ordering = ['-child_birth_date']
+        unique_together = ['slug', 'person']
+
+
+
+    def __str__(self):
+        return "{}: {}".format(
+            self.person, self.child_name)
 
     def get_absolute_url(self):
-        return reverse('member:children-detail',
-                       kwargs={'slug': self.slug})
+        return self.person.get_absolute_url()
 
     def get_delete_url(self):
-        return reverse('member:children-delete',
-                       kwargs={'slug': self.slug})
+        return reverse(
+            'member:children-delete',
+            kwargs={
+                'person_slug': self.person.slug,
+                'children_slug': self.slug})
 
     def get_update_url(self):
-        return reverse('member:children-update',
-                       kwargs={'slug': self.slug})
+        return reverse(
+            'member:children-update',
+            kwargs={
+                'person_slug': self.person.slug,
+                'children_slug': self.slug})
 
-    def __str__(self):  # __unicode__ on Python 2
-        return self.child_name
 
     def natural_key(self):
         return (
@@ -162,16 +184,19 @@ class Membership(models.Model):
 
 
 class ExecMember(models.Model):
-    name = models.ForeignKey(Person, on_delete=models.CASCADE )
+    name = models.ForeignKey(Person, on_delete=models.CASCADE ,help_text='Select Member Name')
     committee_position = models.CharField(max_length=100)
     slug = AutoSlugField(populate_from='committee_position')
-    rank = models.IntegerField(blank=True)
+    committe_period = models.CharField(max_length=9, validators=[RegexValidator(
+        regex='^(\d{4}-(\d{2}|\d{4}))$', message='Period format yyyy-yyyy not comply.', ), ], )
+    rank = models.IntegerField()
     member_start_date = models.DateField(blank=True)
     member_end_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        ordering =['rank']
+        ordering =['-committe_period','-rank']
+        unique_together = ['committe_period', 'rank']
 
     def get_absolute_url(self):
         return reverse('member:execomember-detail', kwargs={'slug': self.slug})
@@ -189,7 +214,7 @@ class ExecMember(models.Model):
 
 
 class Constitution(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, unique=True)
     slug = AutoSlugField(populate_from='title')
     content = models.TextField()
     created = models.DateField(auto_now_add=True)
@@ -263,11 +288,10 @@ class EventManager(models.Manager):
 
 class Event(models.Model):
     name = models.CharField(
-        max_length=31,unique=True, db_index=True)
+        max_length=65,unique=True, db_index=True)
     slug = AutoSlugField(populate_from='name')
     description = models.TextField()
     created = models.DateField('date created', auto_now_add=True)
-
     tags = models.ManyToManyField(Tag, blank=True)
 
     objects = EventManager()
@@ -323,7 +347,7 @@ class GalleryManager(models.Manager):
 
 class Gallery(models.Model):
     title = models.CharField(max_length=35)
-    slug = AutoSlugField(populate_from='title')
+    slug = models.SlugField(max_length=35)
     event = models.ForeignKey(Event, on_delete=models.CASCADE )
     width = models.IntegerField(default=0)
     height = models.IntegerField(default=0)

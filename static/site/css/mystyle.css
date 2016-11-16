@@ -226,7 +226,7 @@ h2, h3 {
 }
 
 
-@media (max-width: 790px) {
+@media (max-width: 960px) {
     .navbar-header {
         float: none;
     }
@@ -374,6 +374,9 @@ header h1 {
 @media only screen and (max-width : 940px),
 only screen and (max-device-width : 940px){
 	.photo {width: 100%;}
+    .banner>h4 {font-size: 1.15em;}
+
+
 }
 
 @media only screen and (max-width : 720px),
@@ -382,6 +385,8 @@ only screen and (max-device-width : 720px){
 	/* Hide AddToAny vertical share bar when screen is less than 980 pixels wide */
 
     .a2a_floating_style.a2a_vertical_style { display: none; }
+    .top-bar {display:none;}
+    .sidebar{display:none;}
 
 }
 
@@ -550,4 +555,10 @@ body>footer li{
 
 .banner {
     text-align: center;
+}
+
+.row-crispy {
+    margin-left:10px;
+    margin-right:10px;
+
 }

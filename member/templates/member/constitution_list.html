@@ -2,16 +2,18 @@
 
 {% block body %}
 
- {% if perms.member.add_constitution %}
+           <div role="navigation" aria-label="breadcrumbs navigation">
+               <ul class="breadcrumb"><li class="active">Constitution</li>
 
-       <div role="navigation" aria-label="breadcrumbs navigation">
-           <ul class="breadcrumb"><li class="active">Constitution</li>
+            </ul>
+                <div class="col-sm-8">
+               {% if perms.member.add_constitution %}
+                <a class="btn btn-primary pull-right" href="{% url 'member:cons-create' %}"><i class="icon-plus icon-white"></i> Add Constitution</a>
+                <h1>Constitution</h1>
+                {% endif %}
+                     </div>
+        </div>
 
-        </ul>
-            <a class="btn btn-primary pull-right" href="{% url 'member:cons-create' %}"><i class="icon-plus icon-white"></i> Add Constitution</a>
-            <h1>Constitution</h1>
-    </div>
-{% endif %}
 
     <div class="container-fluid">
         <div class="row">
@@ -19,12 +21,11 @@
 
         <div class="col-sm-8 col-md-9">
 
-
-
-            {% if documents %}
+             {% if documents %}
 
                 {% for document in documents %}
-                        <p>{{document.title}}</p>
+            <ul>
+                       <li><p>{{document.title}}</p>
                         <p>{{document.content}}</p>
 
                        {% if document.docfile %}
@@ -47,7 +48,8 @@
                         </button>
                         </a>
                         {% endif %}
-                    {% endif %}
+                    {% endif %}</li>
+                </ul>
                 {% endfor %}
 
             {% else %}

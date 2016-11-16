@@ -49,8 +49,8 @@
            <h4><strong>Member Information</strong></h4>
 
                 <p>Name: <strong>{{object.name}}</strong></p>
-                 <p>Name in Bangla:<strong>{{object.name_in_bangla}}</strong> </p>
-              <p>Nick Name:<strong>{{object.nick_name}}</strong> </p>
+                 <p>Name in Bangla: <strong>{{object.name_in_bangla}}</strong> </p>
+              <p>Nick Name:<strong> {{object.nick_name}}</strong> </p>
               <p>Date of Birth: <strong>{{object.birth_date}}</strong></p>
               <p>Present Address: <strong>{{object.present_address}}</strong></p>
               <p>Permanent Address: <strong>{{object.permanent_address}}</strong></p>
@@ -103,14 +103,23 @@
 
   </div> <!-- row -->
 
-    {% if person.children_set.all or perms.blog.view_future_post and person.blog_posts.all or person.published_posts|length > 0 or perms.member.add_children %}
+{% if person.child_set.all or perms.blog.view_future_post and person.blog_posts.all or person.published_posts|length > 0 or perms.member.add_child %}
      <div class="row">
 
   <div class="col-sm-6">
      <div class="other-detail">
+
+         {% if user.pk == person.user.pk %}
+          <p>
+                <a
+                    href="{{ person.get_child_create_url }}">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        Add Children</button></a></p>
+          {% endif %}
+
         <h4><strong>Children Information</strong></h4>
 
-      {% if person.children_set.all %}
+      {% if person.child_set.all %}
         {% if perms.blog.view_future_post and person.blog_posts.all or person.published_posts|length > 0 %}
           <section class="meta offset-by-two one-third column">
         {% else %}
@@ -132,7 +141,7 @@
 
 
 
-     {% for child in person.children_set.all %}
+     {% for child in person.child_set.all %}
 
         <tbody>
             <tr>
@@ -141,9 +150,9 @@
               <td>{{ child.child_birth_date}}</td>
               <td>{{ child.blood_group}}</td>
 
-                  {% if perms.member.change_children or perms.member.delete_children %}
+                  {% if perms.member.change_child or perms.member.delete_child %}
 
-                      {% if perms.member.change_children %}
+                      {% if perms.member.change_child %}
                         <td>
                           <a
                               href="{{ child.get_update_url }}">
@@ -151,7 +160,7 @@
                         <span class="glyphicon glyphicon-pencil">Edit</span>
                     </button></a></td>
                       {% endif %}
-                      {% if perms.member.delete_children %}
+                      {% if perms.member.delete_child %}
                         <td>
                           <a
                               href="{{ child.get_delete_url }}">
@@ -173,7 +182,7 @@
                 </div>
 
             {% else %}
-            <p><strong>No children in the list.</strong></p>
+            <p><strong>No child in the list.</strong></p>
 
 
       {% endif %}

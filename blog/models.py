@@ -42,9 +42,11 @@ PostManager = BasePostManager.from_queryset(
 
 
 class Post(models.Model):
-    title = models.CharField(max_length=33)
-    slug = AutoSlugField(populate_from='title',
-                         unique_for_month='pub_date')
+    title = models.CharField(max_length=63)
+    slug = models.SlugField(
+        max_length=63,
+        help_text='A label for URL config',
+        unique_for_month='pub_date')
     text = models.TextField()
     docfile = models.FileField(upload_to='news/%Y/%m/%d/', null=True,
                                blank=True,

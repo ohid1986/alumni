@@ -28,7 +28,7 @@
 <div class="container-fluid">
 
         <div class="row">
-            <div class="col-sm-12 col-md-8">
+            <div class="col-sm-7 ">
                 <div class="panel panel-default">
                     <div class="panel-body">
 
@@ -47,7 +47,9 @@
                         </legend>
                         <div class="gallery form-inline">
                             {% for form in formset %}
+
                                 {{ form|crispy }}
+                                <hr>
                             {% endfor %}
                         </div>
                       <div class="form-actions">
@@ -59,4 +61,10 @@
             </div>
         </div>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+
+
+
 {% endblock %}

@@ -8,24 +8,17 @@ urlpatterns = [
 
     url(r'^$', views.HomePageView.as_view(), name='home'),
 
-    # Member
-    url(r'^person/$', views.GeneralMemberView.as_view(), name='person-list'),
-    url(r'^lifemember/$', views.LifeMemberView.as_view(), name='lifemember-list'),
-    url(r'^allmember/$', views.AllMemberListView.as_view(), name='all-member'),
-    url(r'^person/create/$', views.PersonCreate.as_view(), name='person-create'),
-    url(r'^person/(?P<slug>[\w\-]+)/$', views.PersonDetailView.as_view(), name='person-detail'),
-    url(r'^person/(?P<slug>[\w\-]+)/update/$', views.PersonUpdate.as_view(), name='person-update'),
-    url(r'^person/(?P<slug>[\w\-]+)/delete/$', views.PersonDelete.as_view(), name='person-delete'),
+    # Event and Gallery
+    url(r'^gallery/$', views.GalleryList.as_view(), name='gallery-list'),
+    url(r'^gallery/(?P<slug>[\w\-]+)/$', views.GalleryDetailView.as_view(), name='gallery-detail'),
+    url(r'^event/$', views.EventList.as_view(), name='event-list'),
+    url(r'^event/gallery/$', views.EventGalleryListView.as_view(), name='event-gallery'),
+    url(r'^event/create/$', views.EventCreateView.as_view(), name='member_event_create'),
+    url(r'^event/(?P<slug>[\w\-]+)/$', views.EventDetailView.as_view(), name='event-detail'),
+    url(r'^event/(?P<slug>[\w\-]+)/update/$', views.EventUpdateView.as_view(), name='update_event_and_gallery'),
+    url(r'^event/(?P<slug>[\w\-]+)/delete/$', views.EventDelete.as_view(), name='event-delete'),
 
-    #Children
-    url(r'^children/$', views.ChildrenListView.as_view(), name='children-list'),
-    url(r'^children/create/$', views.ChildrenCreate.as_view(), name='children-create'),
-    url(r'^children/(?P<slug>[\w\-]+)/$', views.ChildrenDetailView.as_view(), name='children-detail'),
-    url(r'^children/(?P<slug>[\w\-]+)/update/$', views.ChildrenUpdate.as_view(), name='children-update'),
-    url(r'^children/(?P<slug>[\w\-]+)/delete/$', views.ChildrenDelete.as_view(), name='children-delete'),
-
-
-    # Executive Member
+       # Executive Member
     url(r'^execomember/$', views.ExeCommListView.as_view(), name='execomember-list'),
     url(r'^execomember/create/$', views.ExeCommMembCreate.as_view(), name='execomember-create'),
     url(r'^execomember/(?P<slug>[\w\-]+)/$', views.ExeCommMembDetailView.as_view(), name='execomember-detail'),
@@ -43,15 +36,6 @@ urlpatterns = [
     url(r'^cons/(?P<slug>[\w\-]+)/delete/$', views.ConstitutionDelete.as_view(), name='cons-delete'),
 
 
-    # Event and Gallery
-    url(r'^gallery/$', views.GalleryList.as_view(), name='gallery-list'),
-    url(r'^gallery/(?P<slug>[\w\-]+)/$', views.GalleryDetailView.as_view(), name='gallery-detail'),
-    url(r'^event/$', views.EventList.as_view(), name='event-list'),
-    url(r'^event/gallery/$', views.EventGalleryListView.as_view(), name='event-gallery'),
-    url(r'^event/create/$', views.EventCreateView.as_view(), name='member_event_create'),
-    url(r'^event/(?P<slug>[\w\-]+)/$', views.EventDetailView.as_view(), name='event-detail'),
-    url(r'^event/(?P<slug>[\w\-]+)/update/$', views.EventUpdateView.as_view(), name='update_event_and_gallery'),
-    url(r'^event/(?P<slug>[\w\-]+)/delete/$', views.EventDelete.as_view(), name='event-delete'),
 
 
     # Search
@@ -74,6 +58,33 @@ urlpatterns = [
     url(r'^tag/(?P<slug>[\w\-]+)/update/$',
         views.TagUpdate.as_view(),
         name='member_tag_update'),
+
+    # Member
+    url(r'^person/$', views.GeneralMemberView.as_view(), name='person-list'),
+    url(r'^lifemember/$', views.LifeMemberView.as_view(), name='lifemember-list'),
+    url(r'^allmember/$', views.AllMemberListView.as_view(), name='all-member'),
+    url(r'^person/create/$', views.PersonCreate.as_view(), name='person-create'),
+    url(r'^person/(?P<slug>[\w\-]+)/$', views.PersonDetailView.as_view(), name='person-detail'),
+    url(r'^(?P<person_slug>[\w\-]+)/'
+        r'add_children_link/$',
+        views.ChildCreate.as_view(),
+        name='children-create'),
+    url(r'^person/(?P<slug>[\w\-]+)/update/$', views.PersonUpdate.as_view(), name='person-update'),
+    url(r'^person/(?P<slug>[\w\-]+)/delete/$', views.PersonDelete.as_view(), name='person-delete'),
+    url(r'^(?P<person_slug>[\w\-]+)/'
+        r'(?P<children_slug>[\w\-]+)/'
+        r'delete/$',
+        views.ChildDelete.as_view(),
+        name='children-delete'),
+    url(r'^(?P<person_slug>[\w\-]+)/'
+        r'(?P<children_slug>[\w\-]+)/'
+        r'update/$',
+        views.ChildUpdate.as_view(),
+        name='children-update'),
+
+    # Children
+    url(r'^child/$', views.ChildListView.as_view(), name='children-list'),
+    url(r'^child/(?P<slug>[\w\-]+)/$', views.ChildDetailView.as_view(), name='children-detail'),
 
     # Event
 

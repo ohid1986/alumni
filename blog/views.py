@@ -7,6 +7,9 @@ from core.utils import UpdateView
 from user.decorators import \
     require_authenticated_permission
 
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+
 from .forms import PostForm
 from .models import Post
 from .utils import (
@@ -32,7 +35,7 @@ class PostArchiveYear(
 
 @require_authenticated_permission(
     'blog.add_post')
-class PostCreate(PostFormValidMixin, CreateView):
+class PostCreate(SuccessMessageMixin,PostFormValidMixin, CreateView):
     form_class = PostForm
     model = Post
 

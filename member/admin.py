@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from .models import Person, Membership, ExecMember, Event,Gallery, Children
+from .models import Person, Membership, ExecMember, Event,Gallery, Child,Constitution
 
 # Register your models here.
 
@@ -12,8 +12,9 @@ admin.site.register(Gallery)
 
 admin.site.register(Membership)
 admin.site.register(ExecMember)
+admin.site.register(Constitution)
 
-admin.site.register(Children)
+admin.site.register(Child)
 
 from datetime import datetime
 

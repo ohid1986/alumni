@@ -4,8 +4,11 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
-from .models import Person, ExecMember, Membership, Constitution, Event, Gallery, Tag, Children
-from .forms import MemberForm, ExeCommMemberForm, ConstitutionForm,ChildrenForm, MembershipForm, TagForm, EventForm, GalleryFormSet, ChildrenFormSet
+from .models import Person, ExecMember, Membership, Constitution, Event, Gallery, Tag, Child
+from .forms import MemberForm, ExeCommMemberForm, ConstitutionForm,ChildForm, MembershipForm, TagForm, EventForm, GalleryFormSet
+
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
 
 from user.decorators import require_authenticated_permission
 from .utils import (FormsetMixin, PostFormValidMixin,  PageLinksMixin,
@@ -25,18 +28,26 @@ class HomePageView(TemplateView):
         return context
 
 class PersonDetailView(generic.DetailView):
-    model = Person
-    template_name = 'member/person_detail.html'
+
+    queryset = (
+        Person.objects.all()
+            .prefetch_related('child_set')
+        # below omitted because of with tag
+        # and conditional display based on time
+        # .prefetch_related('blog_posts')
+    )
 
 
 class AllMemberListView(generic.ListView):
+
     model = Person
-    paginate_by = 10
+    paginate_by = 5
     context_object_name = 'persons'
 
 class GeneralMemberView(generic.ListView):
+
     model = Person
-    paginate_by = 10
+    paginate_by = 5
     context_object_name = 'persons'
 
     def get_queryset(self):
@@ -47,9 +58,9 @@ class GeneralMemberView(generic.ListView):
 
     #
 class LifeMemberView(generic.ListView):
-    model = Person
 
-    paginate_by = 10
+    model = Person
+    paginate_by = 5
     context_object_name = 'persons'
 
     def get_queryset(self):
@@ -60,24 +71,30 @@ class LifeMemberView(generic.ListView):
 
 @require_authenticated_permission(
 'member.add_person')
-class PersonCreate(FormsetMixin, CreateView):
-    template_name = 'member/person_form.html'
+class PersonCreate(SuccessMessageMixin,CreateView):
+
     model = Person
-    success_url = '/allmember/'
     form_class = MemberForm
-    formset_class = ChildrenFormSet
+    success_message = "%(name)s was added as %(category)s successfully."
 
-
-
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.request = self.request
+        return form
 
 @require_authenticated_permission(
 'member.change_person')
-class PersonUpdate(FormsetMixin, UpdateView):
-    template_name = 'member/person_form.html'
-    is_update_view = True
+class PersonUpdate(SuccessMessageMixin,UpdateView):
+
     model = Person
     form_class = MemberForm
-    formset_class = ChildrenFormSet
+    success_message = "%(category)s: %(name)s was updated successfully."
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.request = self.request
+        return form
+
 
 @require_authenticated_permission(
 'member.delete_person')
@@ -85,59 +102,91 @@ class PersonDelete(DeleteView):
     model = Person
     success_url = '/allmember/'
 
+    success_message = "%(category)s: %(name)s was deleted successfully."
+
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super(PersonDelete, self).delete(request, *args, **kwargs)
+
+
+from .utils import (ChildrenGetObjectMixin,
+    PersonContextMixin)
+
 
 # Children
 
 @require_authenticated_permission(
-'member.add_children')
-class ChildrenCreate(CreateView):
+'member.add_child')
+class ChildCreate( SuccessMessageMixin,ChildrenGetObjectMixin,
+    PersonContextMixin, CreateView):
     template_name = 'member/children_form.html'
-    model = Children
-    form_class = ChildrenForm
+    model = Child
+    form_class = ChildForm
+    success_message = "Child %(child_name)s was added successfully"
 
-    success_url = '/children/'
+    def get_initial(self):
+        person_slug = self.kwargs.get(
+            self.person_slug_url_kwarg)
+        self.person = get_object_or_404(
+            Person, slug__iexact=person_slug)
+        initial = {
+            self.person_context_object_name:
+                self.person,
+        }
+        initial.update(self.initial)
+        return initial
+
+
 
 @require_authenticated_permission(
-'member.change_children')
-class ChildrenUpdate(UpdateView):
+'member.change_child')
+class ChildUpdate(SuccessMessageMixin,ChildrenGetObjectMixin,
+    PersonContextMixin,UpdateView):
     template_name = 'member/children_form.html'
-    model = Children
-    form_class = ChildrenForm
-    # success_url = '/children/'
+    model = Child
+    form_class = ChildForm
+    slug_url_kwarg = 'children_slug'
+    success_message = "Child %(child_name)s was updated successfully"
+
+
+@require_authenticated_permission(
+'member.delete_child')
+class ChildDelete(ChildrenGetObjectMixin,
+    PersonContextMixin,DeleteView):
+    model = Child
+    slug_url_kwarg = 'children_slug'
+    success_message = "Child was deleted successfully"
 
     def get_success_url(self):
         return (self.object.person
                 .get_absolute_url())
 
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super(ChildDelete, self).delete(request, *args, **kwargs)
 
-@require_authenticated_permission(
-'member.delete_children')
-class ChildrenDelete(DeleteView):
-    model = Children
-
-    def get_success_url(self):
-        return (self.object.person
-                .get_absolute_url())
-
-class ChildrenDetailView(generic.DetailView):
-    model = Children
+class ChildDetailView(generic.DetailView):
+    model = Child
 
 
-class ChildrenListView(generic.ListView):
-    model = Children
+class ChildListView(generic.ListView):
+    model = Child
 
 
 class ExeCommListView(generic.ListView):
     model = ExecMember
     context_object_name = 'members'
 
+
 @require_authenticated_permission(
 'member.add_exec_member')
-class ExeCommMembCreate(CreateView):
+class ExeCommMembCreate(SuccessMessageMixin,CreateView):
     template_name = 'member/execmember_form.html'
     model = ExecMember
     success_url = '/execomember/'
     form_class = ExeCommMemberForm
+    success_message = "%(committe_period)s %(committee_position)s was added successfully"
 
     def get_form(self):
         kwargs = super(ExeCommMembCreate, self).get_form()
@@ -148,11 +197,13 @@ class ExeCommMembDetailView(generic.DetailView):
 
 @require_authenticated_permission(
 'member.change_exec_member')
-class ExeCommMembUpdate(UpdateView):
+class ExeCommMembUpdate(SuccessMessageMixin,UpdateView):
     template_name = 'member/execmember_form.html'
     model = ExecMember
     success_url = '/execomember/'
     form_class = ExeCommMemberForm
+    success_message = "%(committe_period)s %(committee_position)s was added successfully"
+
 
 @require_authenticated_permission(
 'member.delete_exec_member')
@@ -168,11 +219,12 @@ class MembershipView(generic.ListView):
 
 @require_authenticated_permission(
 'member.add_membership')
-class MemberCatCreate(CreateView):
+class MemberCatCreate(SuccessMessageMixin,CreateView):
     template_name = 'member/membership_form.html'
     model = Membership
     success_url = '/membercat/'
     form_class = MembershipForm
+    success_message = "%(category)s was added successfully"
 
 #Constitution
 
@@ -182,11 +234,12 @@ class ConstitutionView(generic.ListView):
 
 @require_authenticated_permission(
 'member.add_constitution')
-class ConstitutionCreate(CreateView):
-    template_name = 'member/constitution_form.html'
+class ConstitutionCreate(SuccessMessageMixin,CreateView):
+
     model = Constitution
-    success_url = '/cons/'
     form_class = ConstitutionForm
+    success_url = '/cons/'
+    success_message = "%(title)s was added successfully"
 
 @require_authenticated_permission(
 'member.delete_constitution')
@@ -194,13 +247,21 @@ class ConstitutionDelete(DeleteView):
     model = Constitution
     success_url = '/cons/'
 
+    success_message = "Constitution was deleted successfully."
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super(ConstitutionDelete, self).delete(request, *args, **kwargs)
+
+
 @require_authenticated_permission(
 'member.change_constitution')
-class ConstitutionUpdate(UpdateView):
-    template_name = 'member/constitution_form.html'
+class ConstitutionUpdate(SuccessMessageMixin,UpdateView):
+
     model = Constitution
     success_url = '/cons/'
     form_class = ConstitutionForm
+    success_message = "%(title)s was updated successfully"
 
 
 #Event and Gallery
@@ -211,6 +272,7 @@ class EventCreateView(FormsetMixin, CreateView):
     model = Event
     form_class = EventForm
     formset_class = GalleryFormSet
+    success_message = "%(name)s was added successfully"
 
 @require_authenticated_permission(
 'member.change_event')
@@ -220,6 +282,7 @@ class EventUpdateView(FormsetMixin, UpdateView):
     model = Event
     form_class = EventForm
     formset_class = GalleryFormSet
+    success_message = "%(name)s was updated successfully"
 
 
 class GalleryList(generic.ListView):
@@ -262,7 +325,6 @@ class EventGalleryListView(generic.ListView):
 @require_authenticated_permission(
 'member.delete_event')
 class EventDelete(DeleteView):
-
     model = Event
     success_url = '/event/'
 
@@ -318,9 +380,10 @@ class PersonSearchListView(AllMemberListView):
 
 @require_authenticated_permission(
     'member.add_tag')
-class TagCreate(CreateView):
+class TagCreate(SuccessMessageMixin,CreateView):
     form_class = TagForm
     model = Tag
+    success_message = "%(name)s was added successfully"
 
 
 @require_authenticated_permission(
@@ -345,7 +408,8 @@ class TagList(PageLinksMixin, ListView):
 
 @require_authenticated_permission(
     'member.change_tag')
-class TagUpdate(UpdateView):
+class TagUpdate(SuccessMessageMixin,UpdateView):
     form_class = TagForm
     model = Tag
     success_url = '/tag/'
+    success_message = "%(name)s was updated successfully"
