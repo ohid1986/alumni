@@ -9,6 +9,7 @@ from django.utils.functional import cached_property
 
 from django_resized import ResizedImageField
 from autoslug import AutoSlugField
+from uuslug import uuslug
 
 import datetime
 from datetime import date
@@ -32,7 +33,7 @@ DEGREE_CHOICES = (
 class Person(models.Model):
     YEAR_CHOICES = [(r, r) for r in range(1970, datetime.date.today().year + 1)]
     name = models.CharField(max_length=100)
-    slug = AutoSlugField(populate_from='name')
+    slug = models.SlugField(max_length=100, unique=True)
     name_in_bangla = models.CharField(max_length=100)
     nick_name = models.CharField(max_length=30)
     birth_date = models.DateField()
@@ -112,6 +113,10 @@ class Person(models.Model):
 
     def __str__(self):  # __unicode__ on Python 2
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = uuslug(self.name, instance=self)
+        super(Person, self).save(*args, **kwargs)
 
     def natural_key(self):
         return (self.slug,)

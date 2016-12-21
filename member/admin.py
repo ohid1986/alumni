@@ -34,7 +34,7 @@ class PersonAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'name', 'organization', 'user', 'passing_year',
+                'name', 'slug', 'user', 'birth_date',
             )}),
         ('Related', {
             'fields': (

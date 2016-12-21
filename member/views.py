@@ -72,7 +72,6 @@ class LifeMemberView(generic.ListView):
 @require_authenticated_permission(
 'member.add_person')
 class PersonCreate(SuccessMessageMixin,CreateView):
-
     model = Person
     form_class = MemberForm
     success_message = "%(name)s was added as %(category)s successfully."
@@ -120,7 +119,6 @@ from .utils import (ChildrenGetObjectMixin,
 'member.add_child')
 class ChildCreate( SuccessMessageMixin,ChildrenGetObjectMixin,
     PersonContextMixin, CreateView):
-    template_name = 'member/children_form.html'
     model = Child
     form_class = ChildForm
     success_message = "Child %(child_name)s was added successfully"
@@ -143,7 +141,7 @@ class ChildCreate( SuccessMessageMixin,ChildrenGetObjectMixin,
 'member.change_child')
 class ChildUpdate(SuccessMessageMixin,ChildrenGetObjectMixin,
     PersonContextMixin,UpdateView):
-    template_name = 'member/children_form.html'
+
     model = Child
     form_class = ChildForm
     slug_url_kwarg = 'children_slug'

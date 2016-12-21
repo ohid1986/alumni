@@ -7,7 +7,7 @@
       <li class="active">{{ object.name }}</li>
     </ol>
 
-     {% if perms.member.change_person or perms.member.delete_person %}
+     {% if user.pk == person.user.pk and perms.member.change_person or perms.member.delete_person %}
          <div class="row">
             <div class="col-sm-3 col-sm-offset-1">
                   {% if perms.member.change_person %}
@@ -152,7 +152,7 @@
 
                   {% if perms.member.change_child or perms.member.delete_child %}
 
-                      {% if perms.member.change_child %}
+                      {% if user.pk == person.user.pk and perms.member.change_child %}
                         <td>
                           <a
                               href="{{ child.get_update_url }}">
@@ -160,7 +160,7 @@
                         <span class="glyphicon glyphicon-pencil">Edit</span>
                     </button></a></td>
                       {% endif %}
-                      {% if perms.member.delete_child %}
+                      {% if user.pk == person.user.pk and perms.member.delete_child %}
                         <td>
                           <a
                               href="{{ child.get_delete_url }}">

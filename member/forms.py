@@ -54,65 +54,12 @@ class MemberForm(ModelForm):
                                  )
     class Meta:
         model = Person
-        exclude =('user',)
+        exclude =('user','slug',)
         widgets = {
             'tele_land': forms.TextInput(attrs={'placeholder': 'Start with ' + ', e.g., +8802...'}),
             'tele_cell': forms.TextInput(attrs={'placeholder': 'Start with ' + ', e.g., +8802...'}),
 
         }
-
-    def __init__(self, *args, **kwargs):
-        super(MemberForm, self).__init__(*args, **kwargs)
-
-        self.fields['name'].widget.attrs['placeholder'] = 'Your full name. 100 characters.'
-        self.fields['tele_land'].label = 'Land phone'
-        self.fields['tele_cell'].label = 'Cell phone'
-        self.fields['passing_year'].label = 'Passing year'
-        self.fields['passing_year'].help_text = 'According to your session year'
-
-        self.helper = FormHelper()
-        self.helper.form_method = 'POST'
-        self.helper.form_tag = False
-        self.helper.layout = Layout(
-            # TabHolder(
-            #     Tab(
-            #         'Basic Information','name','name_in_bangla','nick_name','birth_date','blood_group','photo',
-            #         'category', 'is_active',
-            #     ),
-            #     Tab('Adress',
-            #         'present_address',
-            #         'permanent_address',
-            #         'tele_land','tele_cell',
-            #         ),
-            #     Tab('Academic Information',
-            #         'admission_session',
-            #         'degree_obtained',
-            #         'passing_year',
-            #         ),
-            #     Tab('Official Information',
-            #         'profession', 'Designation', 'organization', 'official_address', 'office_phone', 'office_mobile',
-            #         'office_email', 'office_fax', ' website',),
-            #
-            #     Tab('Payment Information',
-            #
-            #         'payment_number', 'bank_name', 'branch_name',
-            #         ),
-            #     Tab(
-            #         'Personal Information',
-            #         'father_name','mother_name','is_married','national_id_no','passport_no','spouse_name','spouse_blood_group',
-            #     ),
-            # ),
-
-            Div(
-                Div(HTML("""<span style="font-size: 150%; alignment:left; color:#009933;">Basic Information</span>"""),'name', 'name_in_bangla', 'nick_name', 'birth_date','blood_group',HTML("""<span style="font-size: 150%; alignment:left; color:#009933;">Adress</span>"""),'present_address','permanent_address','tele_land','tele_cell','photo',HTML("""<span style="font-size: 150%; alignment:left; color:#009933;">Academic Information</span>"""),'admission_session','degree_obtained','passing_year', 'category','is_active', HTML("""<label>Membership Registration fee: 1,000/-</label>"""),HTML('<br>Payment should be made by Pay Order/ Cash in favour of ACCE ALUMNI ASSOCIATION.<br>Bank Account: ACCEAA, D.U. NO.0200003149763<br>Agrani Bank, D.U. Branch, Dhaka.'),css_class='col-md-5'),
-                Div(css_class='col-xs-2'),
-                Div(HTML("""<span style="font-size: 150%; alignment:left; color:#009933;">Payment Information</span>"""),'payment_number','bank_name','branch_name',HTML("""<span style="font-size: 150%; alignment:left; color:#009933;">Official Information</span>"""),'profession', 'Designation', 'organization', 'official_address','office_phone', 'office_mobile','office_email','office_fax',' website',HTML("""<span style="font-size: 150%; alignment:left; color:#009933;">Personal Information</span>"""),'father_name','mother_name','is_married','national_id_no','passport_no','spouse_name','spouse_blood_group', css_class='col-md-5'), css_class='row-crispy'
-            ),
-            # Div(
-            #     Div(Submit('save', 'Save'), css_class='col-md-12'), css_class='row'
-            # )
-        )
-
 
     def clean(self):
         user = get_user(self.request)
@@ -129,6 +76,33 @@ class MemberForm(ModelForm):
             elif Person.objects.filter(name=name, birth_date=birth_date).exists():
                 self.add_error('name', "Person with this Name and Birth date already exists.")
         return self.cleaned_data
+
+    def __init__(self, *args, **kwargs):
+        super(MemberForm, self).__init__(*args, **kwargs)
+
+        self.fields['name'].widget.attrs['placeholder'] = 'Your full name. 100 characters.'
+        self.fields['tele_land'].label = 'Land phone'
+        self.fields['tele_cell'].label = 'Cell phone'
+        self.fields['passing_year'].label = 'Passing year'
+        self.fields['passing_year'].help_text = 'According to your session year'
+
+        self.helper = FormHelper()
+        self.helper.form_method = 'POST'
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+
+            Div(
+                Div(HTML("""<span style="font-size: 150%; alignment:left; color:#009933;">Basic Information</span>"""),'name','name_in_bangla', 'nick_name', 'birth_date','blood_group',HTML("""<span style="font-size: 150%; alignment:left; color:#009933;">Adress</span>"""),'present_address','permanent_address','tele_land','tele_cell','photo',HTML("""<span style="font-size: 150%; alignment:left; color:#009933;">Academic Information</span>"""),'admission_session','degree_obtained','passing_year', 'category','is_active', HTML("""<label>Membership Registration fee: 1,000/-</label>"""),HTML('<br>Payment should be made by Pay Order/ Cash in favour of ACCE ALUMNI ASSOCIATION.<br>Bank Account: ACCEAA, D.U. NO.0200003149763<br>Agrani Bank, D.U. Branch, Dhaka.'),css_class='col-md-5'),
+                Div(css_class='col-xs-2'),
+                Div(HTML("""<span style="font-size: 150%; alignment:left; color:#009933;">Payment Information</span>"""),'payment_number','bank_name','branch_name',HTML("""<span style="font-size: 150%; alignment:left; color:#009933;">Official Information</span>"""),'profession', 'Designation', 'organization', 'official_address','office_phone', 'office_mobile','office_email','office_fax',' website',HTML("""<span style="font-size: 150%; alignment:left; color:#009933;">Personal Information</span>"""),'father_name','mother_name','is_married','national_id_no','passport_no','spouse_name','spouse_blood_group', css_class='col-md-5'), css_class='row-crispy'
+            ),
+            # Div(
+            #     Div(Submit('save', 'Save'), css_class='col-md-12'), css_class='row'
+            # )
+        )
+
+
+
 
     def save(self, commit=True):
         person = super().save(commit=False)
