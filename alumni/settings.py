@@ -52,7 +52,7 @@ INSTALLED_APPS = [
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 MIDDLEWARE = [
-    # 'django.middleware.cache.UpdateCacheMiddleware',
+    #'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     # 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -62,17 +62,20 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'django.middleware.cache.FetchFromCacheMiddleware',
+    #'django.middleware.cache.FetchFromCacheMiddleware',
 
 ]
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
-
 
 ROOT_URLCONF = 'alumni.urls'
 
@@ -121,9 +124,9 @@ USE_TZ = True
 
 
 
-SERVER_EMAIL = 'contact@django-unleashed.com'
-DEFAULT_FROM_EMAIL = 'no-reply@django-unleashed.com'
-EMAIL_SUBJECT_PREFIX = '[Startup Organizer] '
+SERVER_EMAIL = 'acceaa@gmail.com'
+DEFAULT_FROM_EMAIL = 'acceaa@gmail.com'
+EMAIL_SUBJECT_PREFIX = '[Alumni] '
 MANAGERS = (
     ('Admin', 'ohid1986@gmail.com'),
 )
@@ -157,7 +160,7 @@ DJANGORESIZED_DEFAULT_SIZE = [1920, 1080]
 DJANGORESIZED_DEFAULT_QUALITY = 75
 DJANGORESIZED_DEFAULT_KEEP_META = True
 
-#DJANGO REGISTRATION REDUX SETTINGS
+#DJANGO REGISTRATION REDUX
 ACCOUNT_ACTIVATION_DAYS = 7
 REGISTRATION_AUTO_LOGIN = True
 

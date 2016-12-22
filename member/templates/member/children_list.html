@@ -1,0 +1,79 @@
+{% extends parent_template|default:"member/base_member.html" %}
+
+{% block title %}
+{{ block.super }} - Children
+{% endblock %}
+
+
+{% block page_header %}
+<div role="navigation" aria-label="breadcrumbs navigation">
+    <ol class="breadcrumb">
+      <li class="active">Children</li>
+    </ol>
+  {% if perms.member.add_children %}
+    <div class="col-sm-6 pull-right">
+    <a class="btn btn-primary "
+        href="{% url 'member:children-create' %}"><i class="icon-plus icon-white"></i>Add Children</a>
+        </div>
+  {% endif %}
+  <h3>Children List</h3>
+</div>
+
+{% endblock page_header %}
+
+{% block org_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+
+    <div style="overflow-x:auto;">
+
+    <table class="table table-striped">
+        <tr>
+            <th>Children</th>
+            <th>Birth Date</th>
+            <th>Blood Group</th>
+        </tr>
+        {% for child in object_list %}
+      <tr>
+            <td><a href="{{ event.get_absolute_url }}">
+              {{ child.child_name }}</a></td>
+          <td>{{ child.child_birth_date }}</td>
+          <td>{{ child.blood_group}}</td>
+            {% if perms.member.change_children or perms.member.delete_children %}
+
+                {% if perms.member.change_children %}
+                  <td>
+                    <a href="{{ child.get_update_url }}">
+                <button type="submit" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-pencil">Edit</span>
+                </button></a></td>
+
+                {% endif %}
+                {% if perms.member.delete_children %}
+                  <td>
+                    <a
+                        href="{{ child.get_delete_url }}">
+                        <button type="submit" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-trash">Delete</span>
+                </button></a></td>
+                {% endif %}
+
+            {% endif %}
+
+        {% empty %}
+          <em>No Children Available</em>
+        {% endfor %}
+        </tr>
+
+      </table>
+
+    </div>
+        </div>
+        </div>
+</div>
+
+
+
+
+{% endblock %}
